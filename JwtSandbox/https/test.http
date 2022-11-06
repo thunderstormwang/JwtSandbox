@@ -1,0 +1,23 @@
+@testenv = https://localhost:7206
+@domain = {{testenv}}
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsb2NhbGhvc3QiLCJqdGkiOiJjMzc4NDIzMy04N2U0LTQxNTgtYTEzMC04Yjc0NWRlODJhZGYiLCJlbWFpbCI6ImZha2VAZW1haWwuY29tIiwibmJmIjoxNjY3NzE0MTM4LCJleHAiOjE2Njc4MDA1MzgsImlhdCI6MTY2NzcxNDEzOCwiYXVkIjoibG9jYWxob3N0In0.NQBFaqxcysjEssDyIN6FmxUDrvIrja7O0OCtrekqxqA
+
+###
+
+POST {{domain}}/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "account": "string",
+  "password": "string",
+  "name": "string"
+}
+
+###
+
+GET https://localhost:7206/api/Permission/anonymous HTTP/1.1
+
+###
+
+GET https://localhost:7206/api/Permission/authorize HTTP/1.1
+Authorization: Bearer {{token}}
