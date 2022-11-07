@@ -47,8 +47,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// 注意順序很重要
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

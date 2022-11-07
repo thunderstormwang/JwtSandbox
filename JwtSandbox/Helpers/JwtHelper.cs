@@ -1,35 +1,34 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using JwtSandbox.Models;
 using Microsoft.IdentityModel.Tokens;
 
-namespace JwtSandbox.Services;
+namespace JwtSandbox.Helpers;
 
-public class JwtService
+public class JwtHelper
 {
-    private string mysecret;
-    private string myexpDate;
+    private readonly AuthSetting _authSetting;
 
-    public JwtService(IConfiguration config)
+    public JwtHelper(IConfiguration config)
     {
-        mysecret = config.GetSection("JwtConfig").GetSection("secret").Value;
-        myexpDate = config.GetSection("JwtConfig").GetSection("expirationInMinutes").Value;
+        _authSetting = config.GetSection("AuthSetting").Get<AuthSetting>();
     }
 
     public string GenerateSecurityToken(string email)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(mysecret);
+        var key = Encoding.ASCII.GetBytes(_authSetting.Secret);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim(JwtRegisteredClaimNames.Iss, "localhost"),
+                new Claim(JwtRegisteredClaimNames.Iss, _authSetting.Issuer),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Email, email)
             }),
-            Audience = "localhost",
-            Expires = DateTime.UtcNow.AddMinutes(double.Parse(myexpDate)),
+            Audience = _authSetting.Audience,
+            Expires = DateTime.UtcNow.AddMinutes(_authSetting.ExpirationInMinutes),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
 

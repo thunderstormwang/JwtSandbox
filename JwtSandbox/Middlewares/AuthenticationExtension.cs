@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using JwtSandbox.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -8,9 +9,9 @@ public static class AuthenticationExtension
 {
     public static IServiceCollection AddTokenAuthentication(this IServiceCollection services, IConfiguration config)
     {
-        var secret = config.GetSection("JwtConfig").GetSection("secret").Value;
-
-        var key = Encoding.ASCII.GetBytes(secret);
+        var authSetting = config.GetSection("AuthSetting").Get<AuthSetting>();
+        var key = Encoding.ASCII.GetBytes(authSetting.Secret);
+        
         services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -23,8 +24,8 @@ public static class AuthenticationExtension
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidIssuer = "localhost",
-                    ValidAudience = "localhost"
+                    ValidIssuer = authSetting.Issuer,
+                    ValidAudience = authSetting.Audience
                 };
             });
 

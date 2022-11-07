@@ -1,5 +1,5 @@
-﻿using JwtSandbox.Models;
-using JwtSandbox.Services;
+﻿using JwtSandbox.Helpers;
+using JwtSandbox.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JwtSandbox.Controllers;
@@ -8,7 +8,7 @@ namespace JwtSandbox.Controllers;
 [Route("api/[controller]")]
 public class AuthController : Controller
 {
-    private IConfiguration _config;
+    private readonly IConfiguration _config;
 
     public AuthController(IConfiguration config)
     {
@@ -18,8 +18,8 @@ public class AuthController : Controller
     [HttpPost, Route("Login")]
     public IActionResult Login(LoginRequest request)
     {
-        var jwt = new JwtService(_config);
-        var token = jwt.GenerateSecurityToken("fake@email.com");  
+        var jwtHelper = new JwtHelper(_config);
+        var token = jwtHelper.GenerateSecurityToken("fake@email.com");  
         return Ok(token);
     }
 }
