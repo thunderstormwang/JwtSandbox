@@ -15,18 +15,24 @@ public class JwtHelper
         _authSetting = config.GetSection("AuthSetting").Get<AuthSetting>();
     }
 
-    public string GenerateSecurityToken(string email)
+    public string GenerateSecurityToken(int userId, string userDisplayName, string email, List<MyRole> roles)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_authSetting.Secret);
+
+        var claims = new List<Claim>()
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new Claim("display_name", userDisplayName),
+            new Claim(JwtRegisteredClaimNames.Iss, _authSetting.Issuer),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.Email, email)
+        };
+        claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r.ToString())));
+        
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Iss, _authSetting.Issuer),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Email, email)
-            }),
+            Subject = new ClaimsIdentity(claims.ToArray()),
             Audience = _authSetting.Audience,
             Expires = DateTime.UtcNow.AddMinutes(_authSetting.ExpirationInMinutes),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

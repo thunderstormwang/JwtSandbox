@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using JwtSandbox.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JwtSandbox.Controllers;
@@ -19,5 +20,26 @@ public class PermissionController : Controller
     public IActionResult Authorize()
     {
         return Ok("authorize");
+    }
+    
+    [Authorize(Roles = "Administrator")]
+    [HttpGet, Route("administrator")]
+    public IActionResult Administrator()
+    {
+        return Ok("authorize administrator");
+    }
+    
+    [Authorize(Roles = "Administrator,Teacher,Student")]
+    [HttpGet, Route("user")]
+    public IActionResult User()
+    {
+        return Ok("authorize user");
+    }
+    
+    [Authorize(Roles = "Administrator,Teacher")]
+    [HttpGet, Route("teacher")]
+    public IActionResult Teacher()
+    {
+        return Ok("authorize teacher");
     }
 }
