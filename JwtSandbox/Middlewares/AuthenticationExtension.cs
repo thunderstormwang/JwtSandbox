@@ -23,7 +23,6 @@ public static class AuthenticationExtension
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
                     // 透過這項宣告，就可以從 "sub" 取值並設定給 User.Identity.Name
-                    //NameClaimType = $"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
                     NameClaimType = ClaimTypes.NameIdentifier,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = true,

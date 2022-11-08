@@ -1,4 +1,6 @@
 ﻿using System.Security.Claims;
+using JwtSandbox.Filters;
+using JwtSandbox.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,14 +19,18 @@ public class PermissionController : Controller
     
     [Authorize]
     [HttpGet, Route("authorize")]
+    [FetchUserInfo]
     public IActionResult Authorize()
     {
         // 從 token 取得資料
-        var name = HttpContext.User.Identity?.Name;
-        var displayName = HttpContext.User.Claims.Where(c => c.Type == "display_name")?.FirstOrDefault()?.Value;
-        var email = HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Email)?.FirstOrDefault()?.Value;
-        var roles = HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Role)?.Select(c => c.Value).ToList();
-        return Ok("authorize");
+        // var userId = HttpContext.User.Identity?.Name;
+        // var displayName = HttpContext.User.Claims.Where(c => c.Type == "display_name")?.FirstOrDefault()?.Value;
+        // var email = HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Email)?.FirstOrDefault()?.Value;
+        // var roles = HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Role)?.Select(c => c.Value).ToList();
+        
+        var userInfo = HttpContext.Items["user_info"] as UserInfo;
+        
+        return Ok(userInfo);
     }
     
     [Authorize(Roles = "Administrator")]
