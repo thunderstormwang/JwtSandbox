@@ -21,7 +21,7 @@ public class AuthController : Controller
     public IActionResult Login(LoginRequest request)
     {
         var userId = 99;
-        var roles = new List<MyRole>() { MyRole.Student };
+        var roles = new List<MyRole>() { MyRole.Teacher, MyRole.Student };
         var jwtHelper = new JwtHelper(_config);
         var token = jwtHelper.GenerateSecurityToken(userId, request.Account, "fake@email.com", roles);
         return Ok(token);

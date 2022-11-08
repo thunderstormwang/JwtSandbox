@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JwtSandbox.Controllers;
@@ -18,6 +19,11 @@ public class PermissionController : Controller
     [HttpGet, Route("authorize")]
     public IActionResult Authorize()
     {
+        // 從 token 取得資料
+        var name = HttpContext.User.Identity?.Name;
+        var displayName = HttpContext.User.Claims.Where(c => c.Type == "display_name")?.FirstOrDefault()?.Value;
+        var email = HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Email)?.FirstOrDefault()?.Value;
+        var roles = HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Role)?.Select(c => c.Value).ToList();
         return Ok("authorize");
     }
     
