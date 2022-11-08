@@ -27,18 +27,18 @@ public class PermissionController : Controller
     {
         return Ok("authorize administrator");
     }
-    
-    [Authorize(Roles = "Administrator,Teacher,Student")]
-    [HttpGet, Route("user")]
-    public IActionResult User()
-    {
-        return Ok("authorize user");
-    }
-    
+
     [Authorize(Roles = "Administrator,Teacher")]
     [HttpGet, Route("teacher")]
     public IActionResult Teacher()
     {
         return Ok("authorize teacher");
+    }
+
+    [Authorize(Roles = "Administrator,Teacher,Student")]
+    [HttpGet, Route("user")]
+    public IActionResult User()
+    {
+        return Ok("authorize user");
     }
 }
