@@ -21,3 +21,8 @@ GET https://localhost:7206/api/Permission/anonymous HTTP/1.1
 
 GET https://localhost:7206/api/Permission/authorize HTTP/1.1
 Authorization: Bearer {{token}}
+
+###
+
+GET https://localhost:7206/api/Permission/administrator HTTP/1.1
+Backdoor: Wakanda Forever

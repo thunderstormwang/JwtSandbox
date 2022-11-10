@@ -9,4 +9,10 @@ public class AuthSetting
     public string Issuer { get; set; }
 
     public string Audience { get; set; }
+
+    public string AuthorizationHeaderName { get; set; }
+
+    public string BackdoorHeaderName { get; set; }
+
+    public string BackdoorKeyword { get; set; }
 }

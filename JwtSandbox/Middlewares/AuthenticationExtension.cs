@@ -39,7 +39,7 @@ public static class AuthenticationExtension
 
     public static IServiceCollection AddMyTokenAuthentication(this IServiceCollection services, IConfiguration config)
     {
-        services.AddAuthentication("MyAuth") // 預設 schema
+        services.AddAuthentication("MyAuth") // 預設 scheme
             .AddScheme<MyAuthenticationSchemeOptions, MyAuthHandler>("MyAuth", o =>
             {
                 // 傳入自定義的欄位

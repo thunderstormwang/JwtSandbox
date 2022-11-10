@@ -1,5 +1,4 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -29,10 +28,10 @@ public class MyAuthHandler : AuthenticationHandler<MyAuthenticationSchemeOptions
         _backdoorClaims = new List<Claim>()
         {
             new Claim("iss", _authSetting.Issuer),
-            new Claim("sub", "0"),
-            new Claim(ClaimTypes.Role, MyRole.Administrator.ToString()),
-            new Claim(ClaimTypes.Role, MyRole.Teacher.ToString()),
-            new Claim(ClaimTypes.Role, MyRole.Student.ToString()),
+            new Claim(JwtRegisteredClaimNames.Sub, "9999"),
+            new Claim("role", MyRole.Administrator.ToString()),
+            new Claim("role", MyRole.Teacher.ToString()),
+            new Claim("role", MyRole.Student.ToString()),
         };
     }
 
@@ -40,7 +39,7 @@ public class MyAuthHandler : AuthenticationHandler<MyAuthenticationSchemeOptions
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         await Task.CompletedTask;
-        
+
         // skip authentication if endpoint has [AllowAnonymous] attribute
         var endpoint = Context.GetEndpoint();
         if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null)
@@ -50,14 +49,15 @@ public class MyAuthHandler : AuthenticationHandler<MyAuthenticationSchemeOptions
         var key = Encoding.ASCII.GetBytes(_authSetting.Secret);
 
         // 撿查有沒有帶後門 token
-        Request.Headers.TryGetValue("Backdoor", out var backdoor);
-        if (backdoor == "Wakanda Forever")
+        Request.Headers.TryGetValue(_authSetting.BackdoorHeaderName, out var backdoor);
+        if (backdoor == _authSetting.BackdoorKeyword)
         {
-            var claims = new ClaimsPrincipal(new ClaimsIdentity(_backdoorClaims));
+            var identity = new ClaimsIdentity(_backdoorClaims, Scheme.Name, JwtRegisteredClaimNames.Sub, "role");
+            var claims = new ClaimsPrincipal(new ClaimsIdentity(identity));
             return AuthenticateResult.Success(new AuthenticationTicket(claims, Scheme.Name));
         }
 
-        if (!Request.Headers.TryGetValue("Authorization", out var authValue))
+        if (!Request.Headers.TryGetValue(_authSetting.AuthorizationHeaderName, out var authValue))
         {
             var error = "token 格式錯誤";
             await WriteErrorResponse(StatusCodes.Status401Unauthorized, error);
@@ -94,18 +94,19 @@ public class MyAuthHandler : AuthenticationHandler<MyAuthenticationSchemeOptions
         try
         {
             handler.ValidateToken(authToken, validationParameters, out var validatedSecurityToken);
-            var claims = new ClaimsPrincipal(new ClaimsIdentity(jwtSecurityToken.Claims));
-            return AuthenticateResult.Success(new AuthenticationTicket(claims, _authSetting.Issuer));
+            var identity = new ClaimsIdentity(jwtSecurityToken.Claims, Scheme.Name, JwtRegisteredClaimNames.Sub, "role");
+            var claims = new ClaimsPrincipal(identity);
+            return AuthenticateResult.Success(new AuthenticationTicket(claims, Scheme.Name));
         }
         catch (SecurityTokenExpiredException)
         {
-            var error = "Token過期";
+            var error = "Token 過期";
             await WriteErrorResponse(StatusCodes.Status401Unauthorized, error);
             return AuthenticateResult.Fail(error);
         }
         catch (SecurityTokenNotYetValidException)
         {
-            var error = "查無SecurityToke";
+            var error = "查無 SecurityToken";
             await WriteErrorResponse(StatusCodes.Status406NotAcceptable, error);
             return AuthenticateResult.Fail(error);
         }
@@ -117,7 +118,7 @@ public class MyAuthHandler : AuthenticationHandler<MyAuthenticationSchemeOptions
         }
         catch (Exception ex)
         {
-            var error = "Token解析失敗";
+            var error = "Token 解析失敗";
             await WriteErrorResponse(StatusCodes.Status406NotAcceptable, error);
             return AuthenticateResult.Fail(error);
         }

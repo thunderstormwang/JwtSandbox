@@ -16,15 +16,15 @@ public class PermissionController : Controller
     {
         return Ok("anonymous");
     }
-    
-    [Authorize]
+
+    [Authorize(AuthenticationSchemes = "MyAuth")]
     [HttpGet, Route("authorize")]
     [FetchUserInfo]
     public IActionResult Authorize()
     {
         return Ok("authorize");
     }
-    
+
     [Authorize(Roles = "Administrator")]
     [HttpGet, Route("administrator")]
     public IActionResult Administrator()
