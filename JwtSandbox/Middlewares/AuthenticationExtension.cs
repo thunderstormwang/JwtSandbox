@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text;
+using JwtSandbox.Handlers;
 using JwtSandbox.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -34,5 +35,15 @@ public static class AuthenticationExtension
             });
 
         return services;
+    }
+
+    public static IServiceCollection AddMyTokenAuthentication(this IServiceCollection services, IConfiguration config)
+    {
+        services.AddAuthentication("MyAuth") // 預設 schema
+            .AddScheme<MyAuthenticationSchemeOptions, MyAuthHandler>("MyAuth", o =>
+            {
+                // 傳入自定義的欄位
+                o.Hello = "Hello World!";
+            });
     }
 }
