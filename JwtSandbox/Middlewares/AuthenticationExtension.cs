@@ -45,5 +45,7 @@ public static class AuthenticationExtension
                 // 傳入自定義的欄位
                 o.Hello = "Hello World!";
             });
+
+        return services;
     }
 }

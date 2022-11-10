@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 
-namespace JwtSandbox.Middlewares;
+namespace JwtSandbox.Models;
 
 public class MyAuthenticationSchemeOptions: AuthenticationSchemeOptions
 {

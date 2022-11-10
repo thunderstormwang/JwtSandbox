@@ -22,15 +22,7 @@ public class PermissionController : Controller
     [FetchUserInfo]
     public IActionResult Authorize()
     {
-        // 從 token 取得資料
-        // var userId = HttpContext.User.Identity?.Name;
-        // var displayName = HttpContext.User.Claims.Where(c => c.Type == "display_name")?.FirstOrDefault()?.Value;
-        // var email = HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Email)?.FirstOrDefault()?.Value;
-        // var roles = HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Role)?.Select(c => c.Value).ToList();
-        
-        var userInfo = HttpContext.Items["user_info"] as UserInfo;
-        
-        return Ok(userInfo);
+        return Ok("authorize");
     }
     
     [Authorize(Roles = "Administrator")]

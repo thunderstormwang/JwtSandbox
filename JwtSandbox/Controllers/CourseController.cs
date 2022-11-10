@@ -26,7 +26,7 @@ public class Course
 
 public class CourseService
 {
-    public void Add(Course course)
+    public void Add(UserInfo userInfo, Course course)
     {
         throw new NotImplementedException();
     }
