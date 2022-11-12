@@ -5,6 +5,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using JwtSandbox.Models;
+using JwtSandbox.Models.Enums;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
@@ -27,7 +28,7 @@ public class MyAuthHandler : AuthenticationHandler<MyAuthenticationSchemeOptions
         _authSetting = _configuration.GetSection("AuthSetting").Get<AuthSetting>();
         _backdoorClaims = new List<Claim>()
         {
-            new Claim("iss", _authSetting.Issuer),
+            new Claim(JwtRegisteredClaimNames.Iss, _authSetting.Issuer),
             new Claim(JwtRegisteredClaimNames.Sub, "9999"),
             new Claim("role", MyRole.Administrator.ToString()),
             new Claim("role", MyRole.Teacher.ToString()),

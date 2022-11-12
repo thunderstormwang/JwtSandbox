@@ -2,43 +2,41 @@
 using JwtSandbox.Models;
 using JwtSandbox.Models.Enums;
 using JwtSandbox.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JwtSandbox.Controllers;
 
-[Authorize(AuthenticationSchemes = "MyAuth")]
 [ApiController]
 [Route("api/[controller]")]
-public class CourseController : Controller
+public class Course2Controller : Controller
 {
-    [Authorize(Roles = "Administrator,Teacher")]
+    [MyPermission(MyFunction.SetCourse, new MyAction[] { MyAction.All })]
     [HttpPost, Route("set_course")]
-    [FetchUserInfo]
+    [FetchUserInfo2]
     public IActionResult SetCourse([FromBody] Course course)
     {
-        var userInfo = HttpContext.Items["user_info"] as UserInfo;
+        var userInfo = HttpContext.Items["user_info"] as UserInfo2;
         var courseService = new CourseService();
         courseService.Add(userInfo, course);
         
         return Ok($"{nameof(SetCourse)} OK");
     }
     
-    [Authorize(Roles = "Administrator,Teacher")]
+    [MyPermission(MyFunction.CancelCourse, new MyAction[] { MyAction.All })]
     [HttpPost, Route("cancel_course")]
     public IActionResult CancelCourse([FromBody] Course course)
     {
         return Ok($"{nameof(CancelCourse)} OK");
     }
     
-    [Authorize(Roles = "Administrator,Student")]
+    [MyPermission(MyFunction.MajorCourse, new MyAction[] { MyAction.All })]
     [HttpPost, Route("major_course")]
     public IActionResult MajorCourse([FromBody] Course course)
     {
         return Ok($"{nameof(MajorCourse)} OK");
     }
     
-    [Authorize(Roles = "Administrator,Student")]
+    [MyPermission(MyFunction.WithdrawCourse, new MyAction[] { MyAction.All })]
     [HttpPost, Route("withdraw_course")]
     public IActionResult WithdrawCourse([FromBody] Course course)
     {

@@ -1,4 +1,4 @@
-﻿namespace JwtSandbox.Models;
+﻿namespace JwtSandbox.Models.Enums;
 
 public enum MyRole
 {
